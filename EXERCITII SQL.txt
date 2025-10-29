@@ -1,0 +1,74 @@
+CREATE TABLE autori(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	nume VARCHAR(50),
+    oras VARCHAR(50),
+    varsta INT
+);
+INSERT INTO autori(nume, oras, varsta) VALUES
+('Brene Brown', 'New York', 45),
+('Roxi Nafousi', 'London', 32),
+('Mel Robbins', 'Chicago', 45),
+('Rochelle Fox', 'Sydney', 30);
+
+CREATE TABLE carti(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  autori_id INT,
+  carte VARCHAR(50),
+  pret DECIMAL(10, 2),
+  FOREIGN KEY(autori_id) REFERENCES autori(id)
+  );
+  INSERT INTO carti(autori_id, carte, pret) VALUES 
+  (1,'Curajul de a fi vulnerabil', 27.00),
+  (1, 'Darurile imperfectiunii', 40.00),
+  (2, 'Manifest', 60.00),
+  (3, 'Let Them', 50.00),
+  (3, 'Regula de 5 minute', 60.00),
+  (4, 'Magnetic', 55.00);
+
+SELECT carte
+FROM carti
+WHERE pret>50;
+
+SELECT carte
+FROM carti
+ORDER by carte ASC;
+
+SELECT nume AS autor
+FROM autori;
+SELECT carte AS titlu_carte
+FROM carti;
+
+SELECT autori.nume AS autori, carti.carte AS titlu_carte
+FROM autori
+JOIN carti ON autori.id=carti.autori_id;
+
+SELECT autori.nume, carti.carte
+FROM autori
+JOIN carti ON autori.id=carti.autori_id
+WHERE oras='London';
+
+SELECT autori.nume, COUNT(*), AVG(carti.pret)
+FROM autori
+JOIN carti ON autori.id=carti.autori_id
+GROUP By autori.nume;
+
+SELECT autori.nume, COUNT(*) AS numar_carti, AVG(carti.pret) AS pret_mediu
+FROM autori
+JOIN carti ON autori.id=carti.autori_id
+GROUP BY autori.nume
+HAVING numar_carti>1 AND pret_mediu>40
+ORDER BY autori.nume ASC;
+
+INSERT INTO carti(autori_id, carte, pret) VALUES
+(2, 'Manifest - Treci la nivelul urmator', 60);
+SELECT * FROM carti;
+
+UPDATE carti
+SET pret=55.00
+WHERE carte='Curajul de a fi vulnerabil';
+SELECT * FROM carti;
+
+DELETE 
+FROM carti
+WHERE pret<50;
+SELECT * FROM carti;
