@@ -1,0 +1,151 @@
+CREATE TABLE  student(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nume VARCHAR(50),
+  an_studii INT,
+  facultate VARCHAR(100)
+  );
+  
+ INSERT INTO student(nume, an_studii, facultate) VALUES
+ ('Ailiese Diana', 4, 'AC'),
+ ('Ionescu Andreea', 3, 'Psihologie'),
+ ('Popescu Ioana', 4, 'AC'),
+ ('Dumbrava Rebecca', 4, 'AC'),
+ ('Magurele Cristina', 3, 'Psihologie'),
+ ('Dumitru Olivia', 4, 'Psihologie'),
+ ('Andree Irina', 2, 'FEEA'),
+ ('Mazare Folorin', 3, 'FEEA');
+
+CREATE TABLE rezultate(
+   id INT PRIMARY KEY AUTO_INCREMENT,
+   materia VARCHAR(50),
+   note INT,
+   student_id INT,
+   FOREIGN KEY (student_id) REFERENCES student(id)
+   );
+ INSERT INTO rezultate(materia, note, student_id) VALUES
+ ('IRA', 7, 1),
+ ('Matematică', 9, 1),
+('Psihologie socială', 8, 2),
+('Psihologie cognitivă', 10, 2),
+('Automate', 6, 3),
+('Matematică', 8, 3),
+('Rețele', 9, 4),
+('Programare C', 10, 4),
+('Psihologie cognitivă', 9, 5),
+('Etică', 8, 5),
+('Psihologie socială', 6, 6),
+('Etică', 9, 6),
+('Contabilitate', 8, 7),
+('Marketing', 7, 7),
+('Economie', 9, 8),
+('Statistică', 10, 8);
+ 
+-- Afișează toți studenții care sunt în anul 4.
+SELECT nume
+FROM student
+WHERE an_studii=4;
+
+-- Afișează toate materiile și notele obținute de studenți.
+Select student.nume, rezultate.materia, rezultate.note
+FROM student
+JOIN rezultate ON student.id=rezultate.student_id;
+
+-- Afișează doar materiile distincte din tabelul rezultate.
+SELECT DISTINCT materia
+FROM rezultate;
+
+-- Sortează toți studenții după nume în ordine alfabetică.
+SELECT nume
+FROM student
+ORDER BY nume ASC;
+
+-- Afișează numele studentului și materia doar pentru cei din facultatea „AC”
+SELECT student.nume, rezultate.materia
+FROM student
+JOIN rezultate ON student.id=rezultate.student_id
+WHERE student.facultate='AC';
+
+-- Afișează numele și media notelor pentru fiecare student.
+SELECT student.nume, AVG(rezultate.note)
+FROM student
+JOIN rezultate ON student.id=rezultate.student_id
+GROUP BY student.nume;
+
+-- Afișează toate materiile și notele, împreună cu facultatea fiecărui student.
+SELECT student.nume, rezultate.materia, rezultate.note, student.facultate
+FROM student
+JOIN rezultate ON student.id=rezultate.student_id;
+
+-- Afișează studenții care au obținut note mai mari de 8 la materia „Matematică”.
+SELECT student.nume, rezultate.note
+FROM student
+JOIN rezultate ON student.id=rezultate.student_id
+WHERE note>8 AND materia='Matematica';
+
+-- Afișează pentru fiecare facultate numărul total de studenți.
+SELECT facultate, COUNT(*) AS total_studenti
+FROM student
+GROUP BY facultate;
+
+-- Afișează media notelor pentru fiecare facultate.
+SELECT student.facultate, AVG(rezultate.note)
+FROM student
+JOIN rezultate ON student.id=rezultate.student_id
+GROUP BY student.facultate;
+
+-- Afișează materiile unde media notelor este peste 8.
+SELECT materia, AVG(note) AS media_notelor
+FROM rezultate
+GROUP BY materia 
+HAVING media_notelor>8;
+
+-- Afișează studenții care au susținut mai mult de 1 examene.
+SELECT student.nume, COUNT(rezultate.materia) AS examene
+FROM student
+JOIN rezultate ON student.id=rezultate.student_id
+GROUP BY student.nume
+HAVING examene>1;
+
+-- Afișează facultățile unde media notelor este mai mare de 7.5
+SELECT student.facultate, AVG(rezultate.note) AS media_notelor
+FROM student
+JOIN rezultate ON student.id=rezultate.student_id
+GROUP BY student.facultate
+HAVING media_notelor>7.5;
+
+-- Afișează studenții din anul 4 care au o medie a notelor mai mare de 8.
+SELECT student.nume, AVG(rezultate.note) AS media
+FROM student
+JOIN rezultate ON student.id=rezultate.student_id
+WHERE an_studii=4
+GROUP BY student.nume
+HAVING  media>8;
+
+-- Afișează materiile la care s-au obținut mai mult de 1 note peste 8.
+SELECT materia, COUNT(note) AS note_obt
+FROM rezultate
+WHERE note>8
+GROUP BY materia
+HAVING note_obt>1;
+
+-- Afișează facultățile în care cel puțin un student are nota maximă (10).
+SELECT student.facultate
+FROM student
+JOIN rezultate ON student.id=rezultate.student_id
+WHERE rezultate.note=10
+GROUP BY student.facultate;
+
+-- Afișează media notelor doar pentru materiile care încep cu litera „P”.
+SELECT materia, AVG(note) AS media
+FROM rezultate
+GROUP BY materia
+HAVING materia LIKE 'P%';
+
+-- Afișează top 3 studenți cu cele mai mari medii.
+SELECT student.nume, AVG(rezultate.note) AS media_notelor
+FROM student
+JOIN rezultate ON student.id=rezultate.student_id
+GROUP BY student.nume
+ORDER BY media_notelor DESC
+LIMIT 3;
+
